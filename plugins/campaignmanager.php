@@ -29,6 +29,17 @@ try {
         public $version = '1.0.0';
         public $enabled = true;
         
+        // API kulcs tárolása a settings tömb használatával
+        public $settings = array(
+            'campaign_api_key' => array(
+                'value' => '',
+                'description' => 'API kulcs a Campaign REST API-hoz',
+                'type' => 'text',
+                'allowempty' => true,
+                'category' => 'Campaign API'
+            )
+        );
+        
         private $api_key = '';
         
         function __construct()
@@ -45,8 +56,8 @@ try {
                 $this->coderoot = dirname(__FILE__) . '/campaignmanager/';
                 
                 // API kulcs betöltése
-                $this->api_key = $this->getPluginOption('api_key');
-                api_log('API kulcs betöltve: ' . substr($this->api_key, 0, 5) . '...');
+                $this->api_key = $this->getConfig('campaign_api_key');
+                api_log('API kulcs betöltve: ' . (empty($this->api_key) ? 'üres' : substr($this->api_key, 0, 5) . '...'));
                 
                 // API kérés kezelése
                 if (isset($_GET['api']) && $_GET['api'] == 1) {
@@ -97,8 +108,8 @@ try {
                     }
                 }
                 
-                api_log('Kapott API kulcs: ' . substr($provided_key, 0, 5) . '...');
-                api_log('Elvárt API kulcs: ' . substr($this->api_key, 0, 5) . '...');
+                api_log('Kapott API kulcs: ' . (empty($provided_key) ? 'üres' : substr($provided_key, 0, 5) . '...'));
+                api_log('Elvárt API kulcs: ' . (empty($this->api_key) ? 'üres' : substr($this->api_key, 0, 5) . '...'));
                 
                 if (empty($this->api_key) || $provided_key != $this->api_key) {
                     api_log('Érvénytelen API kulcs', 'warning');
@@ -137,7 +148,7 @@ try {
                 // API kulcs generálása, ha még nincs
                 if (empty($this->api_key)) {
                     $this->api_key = md5(uniqid(rand(), true));
-                    $this->setPluginOption('api_key', $this->api_key);
+                    $this->setConfig('campaign_api_key', $this->api_key);
                     api_log('Új API kulcs generálva: ' . substr($this->api_key, 0, 5) . '...');
                 }
                 
@@ -158,7 +169,7 @@ try {
                 // API kulcs újragenerálása
                 if (isset($_POST['regenerate_api_key']) && $_POST['regenerate_api_key'] == 1) {
                     $this->api_key = md5(uniqid(rand(), true));
-                    $this->setPluginOption('api_key', $this->api_key);
+                    $this->setConfig('campaign_api_key', $this->api_key);
                     api_log('API kulcs újragenerálva: ' . substr($this->api_key, 0, 5) . '...');
                     echo '<div style="padding: 10px; margin: 10px 0; background-color: #dff0d8; border: 1px solid #d6e9c6; color: #3c763d;">Az API kulcs sikeresen újragenerálva</div>';
                 }
