@@ -57,7 +57,8 @@ class campaignmanager extends phplistPlugin
         )
     );
     
-    private $api_key = '';
+    // Alapértelmezett API kulcs
+    private $api_key = 'test_api_key_123456';
     
     function __construct()
     {
@@ -65,18 +66,8 @@ class campaignmanager extends phplistPlugin
         parent::__construct();
         api_log('Plugin sikeresen betöltve');
         
-        // API kulcs betöltése
-        $this->api_key = getConfig('campaign_api_key');
-        
-        // Ha nincs API kulcs, generáljunk egyet
-        if (empty($this->api_key)) {
-            $this->api_key = md5(uniqid(rand(), true));
-            saveConfig('campaign_api_key', $this->api_key);
-            api_log('Új API kulcs generálva: ' . substr($this->api_key, 0, 5) . '...');
-        }
-        
-        // API kérés kezelése
-        if (isset($_GET['pi']) && $_GET['pi'] == 'campaignmanager' && isset($_GET['api']) && $_GET['api'] == 1) {
+        // API kérés kezelése - csak ha a plugin már teljesen betöltődött
+        if (defined('PHPLISTINIT') && PHPLISTINIT && isset($_GET['pi']) && $_GET['pi'] == 'campaignmanager' && isset($_GET['api']) && $_GET['api'] == 1) {
             $this->handleApiRequest();
         }
     }
@@ -95,20 +86,7 @@ class campaignmanager extends phplistPlugin
         api_log('API kérés kezelése');
         header('Content-Type: application/json');
         
-        // SSL ellenőrzése
-        if (getConfig('campaign_api_enforcessl') && empty($_SERVER['HTTPS'])) {
-            $this->sendError('SSL szükséges az API hívásokhoz', 403);
-            return;
-        }
-        
-        // IP cím ellenőrzése
-        $allowed_ip = getConfig('campaign_api_ipaddress');
-        if (!empty($allowed_ip) && $_SERVER['REMOTE_ADDR'] != $allowed_ip) {
-            $this->sendError('Nem engedélyezett IP cím', 403);
-            return;
-        }
-        
-        // API kulcs ellenőrzése
+        // Egyszerű API kulcs ellenőrzés
         $provided_key = $this->getProvidedApiKey();
         if (empty($provided_key) || $provided_key != $this->api_key) {
             $this->sendError('Érvénytelen API kulcs', 403);
@@ -190,13 +168,6 @@ class campaignmanager extends phplistPlugin
     // Beállítások megjelenítése
     public function displaySettings()
     {
-        // API kulcs újragenerálása
-        if (isset($_POST['regenerate_api_key']) && $_POST['regenerate_api_key'] == 1) {
-            $this->api_key = md5(uniqid(rand(), true));
-            saveConfig('campaign_api_key', $this->api_key);
-            echo '<div class="alert alert-success">Az API kulcs sikeresen újragenerálva</div>';
-        }
-        
         // Alap URL
         $base_url = isset($_SERVER['HTTP_HOST']) ? 
             (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] : 
@@ -209,11 +180,7 @@ class campaignmanager extends phplistPlugin
         echo '<h4>API kulcs</h4>';
         echo '<p>Az API kulcs szükséges minden API kéréshez. Küldd el a <code>X-Api-Key</code> HTTP fejlécben, vagy <code>key</code> paraméterként.</p>';
         echo '<div class="well well-sm"><code>' . htmlspecialchars($this->api_key) . '</code></div>';
-        
-        echo '<form method="post">';
-        echo '<input type="hidden" name="regenerate_api_key" value="1">';
-        echo '<button type="submit" class="btn btn-default">API kulcs újragenerálása</button>';
-        echo '</form>';
+        echo '<p><em>Megjegyzés: Ez egy teszt API kulcs. A valós környezetben ezt biztonságosabbra kell cserélni.</em></p>';
         
         echo '<h4>API végpontok</h4>';
         echo '<div class="well well-sm">';
