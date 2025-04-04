@@ -1,0 +1,236 @@
+version 2.4.3+20250401
+      Include campaigns that have already been sent but resubmitted
+      CS-fixer
+
+version 2.4.2+20231212
+      Ensure the ID column for a chart is a string. Using PDO it is returned as an integer.
+      Remove unnecessary parameter to queryOne()
+      Fix error stopping export of Links tab
+      Use namespaced names for Common plugin classes instead of PEAR names
+
+version 2.4.1+20230714
+      Avoid displaying backslashes in attribute values
+
+version 2.4.0+20230707
+      Show number of views on Opened tab
+      Add User Views tab to show rows from user_message_view table
+      Optimise message opens for a large number of subscribers
+      Show latest view and subscriber status on Opened tab
+      Remove obsolete code
+      Optimise links tab for a large number of subscribers
+      Separate the queries for message opens and not opens
+      Rework link query
+      Add form to Opened tab to filter on minimum number of views and links clicked
+      Trying to show messages sent to a list that no longer exists caused an exception
+
+version 2.3.6+20211231
+      Allow captions in the campaign pdf report to be translated.
+
+version 2.3.5+20211212
+      Remove manipulation of Subject field as tFPDF supports unicode
+
+version 2.3.4+20210926
+      Only format message dates that have a value to avoid php 8 error
+
+version 2.3.3+20210220
+      Make the display of tabs consistent by revising the column headings and removing the panel heading
+
+version 2.3.2+20210219
+      Include the campaign title on the Campaign report when it is different to the subject
+      Persist the from and to dates
+
+version 2.3.1+20210218
+      Revise Spanish translations, provided by Juan Cimadevilla.
+
+version 2.3.0+20210216
+      Add alternative selection of campaigns for the Campaigns tab by selecting a list and from and to dates.
+      Add English translations that use s()
+      Revise English translations
+
+version 2.2.2+20210210
+      On the Campaigns report improve the display of the subject field.
+
+version 2.2.1+20210208
+      On the Campaigns report convert the subject to ISO-8859-1
+
+version 2.2.0+20210208
+      Use FPDF instead of wkhtmltopdf to create the campaign PDF report
+      Remove list names from the campaign report
+
+version 2.1.29+20200416
+      Use core phplist functions to format dates so that the date format configuration setting will be applied.
+
+version 2.1.28+20200306
+      Rework handling of attribute DAO
+
+version 2.1.27+20190730
+      Reduce the number of tabs displayed
+      Display the Opened tab after submitting the Settings tab
+      Provide js to calculate url when the chart is clicked
+      Revise dependencies
+
+version 2.1.26+20190301
+      Display 5 campaigns on the campaigns tab initially
+      Separate the message selection sql into a subquery
+      Other minor improvements
+
+version 2.1.25+20181210
+Maasik (1):
+      Fixes #11
+      Allow the month of a message sent date to be translated
+      Include seconds when displaying times of clicks
+
+version 2.1.24+20181203
+Maasik (1):
+      Add Russian translation file
+      Allow graph captions to be translated
+
+version 2.1.23+20181203
+      Include campaign title in pdf report
+
+version 2.1.22+20181022
+      Rework handling of list names
+
+version 2.1.21+20180916
+      On the Lists tab highlight the currently selected list
+
+version 2.1.20+20180829
+      Link to user page instead of userhistory, which was removed in phplist 3.3.4
+
+version 2.1.19+20180810
+      Added configuration to display campaign subject or title
+
+version 2.1.18+20180512
+      Correct clicked total on Domain tab
+
+version 2.1.17+20180308
+      Refactor the queries for messages and a single message
+      Refactor dependencies
+      Fix line endings
+
+version 2.1.16+20180226
+      Add base64 encoded image to appear on pdf report.
+      Tweak styles for pdf report.
+
+version 2.1.15+20180129
+      Display percentages on the Domains and Links pages
+      Include a link to the target URL on the Links page
+      Revise the version of Common Plugin that is required
+      Correct white space for cs fixer
+
+version 2.1.14+20170703
+      Improve order of sorting on campaigns tab
+
+version 2.1.13+20170601
+      Fix bug in using exclude option.
+      Inject dependencies into controller and model classes.
+      Update required version of Common Plugin
+
+version 2.1.12+20170518
+      Avoid displaying \ in campaign subject.
+      Display campaign subject instead of title on Opened, Unopened etc tabs.
+
+version 2.1.11+20170510
+      Use correct caption for time of first view of a campaign.
+      Remove obsolete ISO-8859-1 encoded translations.
+
+version 2.1.10+20170418
+      Ensure that Campaigns tab always shows a date value
+      Coding standards changes
+      Update copyright year
+
+version 2.1.9+20170304
+      Add pageaction page to work with phplist help
+
+version 2.1.8+20160604
+      Revise translations
+
+version 2.1.7+20160603
+      Avoid Excel problem with ID in first column
+
+version 2.1.6+20160527
+      Add class map
+
+version 2.1.5+20160424
+      Fix another problem with subject
+
+version 2.1.4+20160424
+      Add link to documentation
+      Fix bug with older messages not having campaign title
+
+version 2.1.3+20160316
+      rationalise options, default encoding of utf-8
+
+version 2.1.2+20160316
+      Ensure campaign subject is displayed instead of campaign title
+
+version 2.1.1+20150828
+      Updated dependencies
+
+version 2.1.0+20150826
+      Export either all campaigns or only those currently displayed
+
+version 2.0.0+20150815
+      Updated dependencies
+
+version 2015-05-23
+      Alter colours used for overlays
+
+version 2015-05-10
+      Add dependency checks
+
+version 2015-03-23
+      Autoloader now created in CommonPlugin
+
+version 2015-01-24
+      Display whether a URL is personalised
+
+version 2014-11-19
+      Correct url for exporting link clicks
+
+version 2014-09-04
+      Order by sendstart when sent is null
+
+version 2014-08-01
+      Fix sql error when displaying tabs for one list
+
+version 2014-07-26
+      Order by modified when sent is null
+
+version 2014-07-13
+      Correct use of listid
+      Corrected line endings
+      Simplify test for common plugin
+      Correct test for message id
+
+version 2014-04-22
+      Display messages tab when there are no messages
+
+version 2014-03-18
+      Persist list id
+      Correct problem of Lists tab not showing the correct latest message
+      Make message status values available as a constant
+      Correct problem on Lists tab of Latest not linking to the Opened tab
+      Select messages with sent, inprocess or suspended status
+      Fix problem when different links are shortened to the same value
+
+version 2014-01-27
+      On Messages tab order by the sent date instead of message id
+
+version 2014-01-25
+      Use javascript Google Chart instead of Image Charts
+      Use campaign instead of message
+
+version 2013-12-10
+      GitHub #3 - Test for 'sent' status on usermessage table
+
+version 2013-08-26
+      Added description for plugins page
+      Clarify the required version of phplist
+      Test that common plugin is installed and enabled
+
+version 2013-04-22
+      Changes to CommonPlugin_PageURL and CommonPlugin_ImageTag
+      Change tabs to 4 spaces throughout
+      Initial version file
+      Remove dependency on PLUGIN_ROOTDIR
