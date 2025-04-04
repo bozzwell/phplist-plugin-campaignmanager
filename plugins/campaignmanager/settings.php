@@ -10,17 +10,26 @@ if (!defined('PHPLISTINIT')) {
     die('Invalid access');
 }
 
+// Hibakezelés bekapcsolása fejlesztési célokra
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// Plugin példány lekérése
+global $plugins;
+$plugin = $plugins['campaignmanager'];
+
 // API kulcs lekérése
-$api_key = getConfig('campaignmanager_api_key');
+$api_key = $plugin->getPluginOption('api_key');
 if (empty($api_key)) {
     $api_key = md5(uniqid(rand(), true));
-    saveConfig('campaignmanager_api_key', $api_key);
+    $plugin->setPluginOption('api_key', $api_key);
 }
 
 // API kulcs újragenerálása
 if (isset($_POST['regenerate_api_key']) && $_POST['regenerate_api_key'] == 1) {
     $api_key = md5(uniqid(rand(), true));
-    saveConfig('campaignmanager_api_key', $api_key);
+    $plugin->setPluginOption('api_key', $api_key);
     $_SESSION['campaignmanager_api_message'] = 'Az API kulcs sikeresen újragenerálva';
 }
 
@@ -28,6 +37,14 @@ if (isset($_POST['regenerate_api_key']) && $_POST['regenerate_api_key'] == 1) {
 if (isset($_SESSION['campaignmanager_api_message'])) {
     echo '<div class="actionresult">' . htmlspecialchars($_SESSION['campaignmanager_api_message']) . '</div>';
     unset($_SESSION['campaignmanager_api_message']);
+}
+
+// Alapértelmezett webhely URL
+$website_url = '';
+if (isset($_SERVER['HTTP_HOST']) && isset($_SERVER['REQUEST_SCHEME'])) {
+    $website_url = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'];
+} elseif (isset($_SERVER['SERVER_NAME'])) {
+    $website_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['SERVER_NAME'];
 }
 
 // API dokumentáció és beállítások
@@ -50,30 +67,30 @@ echo '</form>';
 echo '<h2>API végpontok</h2>';
 echo '<div class="endpoints">';
 echo '<h3>Kampányok listázása</h3>';
-echo '<pre>GET ' . getConfig('website') . '/?page=campaignmanager&pi=campaignmanager&api=1&action=list</pre>';
+echo '<pre>GET ' . $website_url . '/?page=campaignmanager&pi=campaignmanager&api=1&action=list</pre>';
 echo '<p>Opcionális paraméterek:</p>';
 echo '<ul>';
 echo '<li><code>status</code> - Szűrés állapot szerint (pl. inprocess, suspended, cancelled, sent)</li>';
 echo '</ul>';
 
 echo '<h3>Egy kampány részletes adatai</h3>';
-echo '<pre>GET ' . getConfig('website') . '/?page=campaignmanager&pi=campaignmanager&api=1&action=get&id={kampány_id}</pre>';
+echo '<pre>GET ' . $website_url . '/?page=campaignmanager&pi=campaignmanager&api=1&action=get&id={kampány_id}</pre>';
 
 echo '<h3>Kampány szüneteltetése</h3>';
-echo '<pre>POST ' . getConfig('website') . '/?page=campaignmanager&pi=campaignmanager&api=1&action=pause&id={kampány_id}</pre>';
+echo '<pre>POST ' . $website_url . '/?page=campaignmanager&pi=campaignmanager&api=1&action=pause&id={kampány_id}</pre>';
 
 echo '<h3>Kampány folytatása</h3>';
-echo '<pre>POST ' . getConfig('website') . '/?page=campaignmanager&pi=campaignmanager&api=1&action=resume&id={kampány_id}</pre>';
+echo '<pre>POST ' . $website_url . '/?page=campaignmanager&pi=campaignmanager&api=1&action=resume&id={kampány_id}</pre>';
 
 echo '<h3>Kampány leállítása</h3>';
-echo '<pre>POST ' . getConfig('website') . '/?page=campaignmanager&pi=campaignmanager&api=1&action=stop&id={kampány_id}</pre>';
+echo '<pre>POST ' . $website_url . '/?page=campaignmanager&pi=campaignmanager&api=1&action=stop&id={kampány_id}</pre>';
 echo '</div>';
 
 echo '<h2>Példa API használatra</h2>';
 echo '<h3>PHP példa</h3>';
 echo '<pre>
 $api_key = "' . htmlspecialchars($api_key) . '";
-$api_url = "' . getConfig('website') . '/?page=campaignmanager&pi=campaignmanager&api=1&action=list";
+$api_url = "' . $website_url . '/?page=campaignmanager&pi=campaignmanager&api=1&action=list";
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $api_url);
@@ -92,7 +109,7 @@ print_r($data);
 echo '<h3>JavaScript példa</h3>';
 echo '<pre>
 const apiKey = "' . htmlspecialchars($api_key) . '";
-const apiUrl = "' . getConfig('website') . '/?page=campaignmanager&pi=campaignmanager&api=1&action=list";
+const apiUrl = "' . $website_url . '/?page=campaignmanager&pi=campaignmanager&api=1&action=list";
 
 fetch(apiUrl, {
     method: "GET",

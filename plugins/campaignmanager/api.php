@@ -12,6 +12,11 @@ if (!defined('PHPLISTINIT')) {
     include_once '../../../admin/init.php';
 }
 
+// Hibakezelés bekapcsolása fejlesztési célokra
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 // Ellenőrizzük, hogy API kérés-e
 if (isset($_GET['api']) || isset($_POST['api'])) {
     // CORS beállítások API hívásokhoz
@@ -32,14 +37,18 @@ if (isset($_GET['api']) || isset($_POST['api'])) {
         'error' => null
     ];
     
+    // Plugin példány lekérése
+    global $plugins;
+    $plugin = $plugins['campaignmanager'];
+    
     // API hitelesítés
     $api_key = isset($_SERVER['HTTP_X_API_KEY']) ? $_SERVER['HTTP_X_API_KEY'] : '';
-    $config_api_key = getConfig('campaignmanager_api_key', '');
+    $config_api_key = $plugin->getPluginOption('api_key');
     
     if (!$config_api_key) {
         // Ha még nincs beállítva API kulcs, generáljunk egyet
         $config_api_key = md5(uniqid(rand(), true));
-        saveConfig('campaignmanager_api_key', $config_api_key);
+        $plugin->setPluginOption('api_key', $config_api_key);
     }
     
     // API kulcs ellenőrzése
@@ -148,11 +157,16 @@ if (isset($_GET['api']) || isset($_POST['api'])) {
  * @return array Kampányok listája
  */
 function getCampaigns($status = null) {
-    global $tables;
+    global $tables, $GLOBALS;
+    
+    // Ellenőrizzük, hogy a phpList SQL függvények elérhetőek-e
+    if (!function_exists('Sql_Query')) {
+        include_once dirname(__FILE__) . '/../../../admin/commonlib/lib/userlib.php';
+    }
     
     $whereClause = '';
     if ($status) {
-        $whereClause = sprintf(' WHERE m.status = "%s"', sql_escape($status));
+        $whereClause = sprintf(' WHERE m.status = "%s"', addslashes($status));
     }
     
     $query = sprintf('
@@ -207,6 +221,11 @@ function getCampaigns($status = null) {
 function getCampaignDetails($id) {
     global $tables;
     
+    // Ellenőrizzük, hogy a phpList SQL függvények elérhetőek-e
+    if (!function_exists('Sql_Query')) {
+        include_once dirname(__FILE__) . '/../../../admin/commonlib/lib/userlib.php';
+    }
+    
     // Alapadatok lekérdezése
     $query = sprintf('SELECT * FROM %s WHERE id = %d', $tables['message'], intval($id));
     $result = Sql_Query($query);
@@ -252,6 +271,11 @@ function getCampaignDetails($id) {
 function updateCampaignStatus($id, $status) {
     global $tables;
     
+    // Ellenőrizzük, hogy a phpList SQL függvények elérhetőek-e
+    if (!function_exists('Sql_Query')) {
+        include_once dirname(__FILE__) . '/../../../admin/commonlib/lib/userlib.php';
+    }
+    
     $valid_statuses = ['inprocess', 'suspended', 'cancelled'];
     if (!in_array($status, $valid_statuses)) {
         return false;
@@ -259,7 +283,7 @@ function updateCampaignStatus($id, $status) {
     
     $query = sprintf('UPDATE %s SET status = "%s" WHERE id = %d', 
         $tables['message'], 
-        sql_escape($status), 
+        addslashes($status), 
         intval($id)
     );
     

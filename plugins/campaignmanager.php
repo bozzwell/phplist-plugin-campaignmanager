@@ -29,11 +29,20 @@ class campaignmanager extends phplistPlugin
         $this->coderoot = dirname(__FILE__).'/campaignmanager/';
         parent::__construct();
         
-        // API kérés kezelése
+        // API kérés kezelése - hibakezelést adunk hozzá
         if (isset($_GET['page']) && $_GET['page'] == 'campaignmanager' && 
             isset($_GET['pi']) && $_GET['pi'] == 'campaignmanager' &&
             (isset($_GET['api']) || isset($_POST['api']))) {
-            include_once $this->coderoot . 'api.php';
+            
+            // Hibakezelés bekapcsolása fejlesztési célokra
+            ini_set('display_errors', 1);
+            ini_set('display_startup_errors', 1);
+            error_reporting(E_ALL);
+            
+            // Biztonságosan betöltjük az API fájlt
+            if (file_exists($this->coderoot . 'api.php')) {
+                include_once $this->coderoot . 'api.php';
+            }
         }
     }
 
@@ -52,11 +61,11 @@ class campaignmanager extends phplistPlugin
     {
         parent::activate();
         
-        // API kulcs generálása, ha még nincs
-        $api_key = getPluginOption('campaignmanager_api_key');
+        // API kulcs generálása, ha még nincs - phpList natív függvényeket használunk
+        $api_key = $this->getPluginOption('api_key');
         if (!$api_key) {
             $api_key = md5(uniqid(rand(), true));
-            setPluginOption('campaignmanager_api_key', $api_key);
+            $this->setPluginOption('api_key', $api_key);
         }
         
         return true;
