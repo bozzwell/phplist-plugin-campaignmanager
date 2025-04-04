@@ -3,7 +3,7 @@
  * Campaign API Plugin
  */
 
-class campaignmanager extends phplistPlugin
+class campaignapi extends phplistPlugin
 {
     public $name = 'Campaign API';
     public $description = 'REST API for campaigns';
@@ -14,6 +14,6 @@ class campaignmanager extends phplistPlugin
     {
         // Fontos: először a szülő konstruktort hívjuk meg
         parent::__construct();
-        $this->coderoot = dirname(__FILE__) . '/campaignmanager/';
+        $this->coderoot = dirname(__FILE__) . '/campaignapi/';
     }
 }
