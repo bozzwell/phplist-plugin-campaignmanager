@@ -131,12 +131,19 @@ class campaignmanager extends phplistPlugin
     public function parseRouteRequest()
     {
         if (isset($_GET['pi']) && $_GET['pi'] == 'campaignmanager') {
-            api_log('API kérés érkezett');
-            
-            // API kérés kezelése a külön fájlban
-            include_once $this->coderoot . 'api.php';
+            api_log('API kérés érkezett: ' . $_SERVER['REQUEST_URI']);
             return true;
         }
         return false;
+    }
+    
+    // Oldal akció kezelése
+    public function handle($action)
+    {
+        api_log('Action kezelése: ' . $action);
+        
+        // API kérés kezelése a külön fájlban
+        include_once $this->coderoot . 'api.php';
+        return true;
     }
 }
